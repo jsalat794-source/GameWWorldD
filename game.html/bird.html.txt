@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Flappy Bird</title>
+</head>
+<body bgcolor="#70c5ce" text="white">
+
+    <center>
+        <h1>Flappy Bird</h1>
+        <p>Нажимай <b>ПРОБЕЛ</b> или <b>КЛИКАЙ</b> мыbase по экрану, чтобы лететь</p>
+
+        <!-- Игровое поле -->
+        <canvas id="flappy" width="320" height="480" style="border: 5px solid white; background: #70c5ce; cursor: pointer;"></canvas>
+        
+        <br><br>
+        
+        <!-- Работающая кнопка возврата в меню -->
+        <a href="menu.html">
+            <button style="padding: 12px 25px; border-radius: 15px; cursor: pointer; font-size: 16px;">
+                ← Вернуться в меню
+            </button>
+        </a>
+    </center>
+
+    <script>
+        var canvas = document.getElementById("flappy");
+        var ctx = canvas.getContext("2d");
+
+        // Настройки птички
+        var bird = { 
+            x: 50, 
+            y: 150, 
+            w: 20, 
+            h: 20, 
+            gravity: 0.4,   // Сила падения
+            jump: -6.5,     // Сила прыжка
+            velocity: 0 
+        };
+        
+        // Настройки препятствий
+        var pipes = [];
+        var gap = 130;      // Размер прохода между трубами
+        var pipeWidth = 50;
+        var frame = 0;
+        var score = 0;
+
+        // Функция нормального прыжка
+        function birdJump() {
+            bird.velocity = bird.jump; 
+        }
+
+        // Слушаем клавиатуру (Пробел)
+        document.addEventListener("keydown", function(e) { 
+            if(e.code == "Space" || e.keyCode == 32) {
+                birdJump(); 
+                e.preventDefault(); // Запрещаем прокрутку страницы вниз при нажатии пробела
+            }
+        });
+
+        // Слушаем клик мыши по игровому полю
+        canvas.addEventListener("mousedown", function() {
+            birdJump();
+        });
+
+        function draw() {
+            // Очистка и отрисовка неба
+            ctx.fillStyle = "#70c5ce";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Физика птички
+            bird.velocity += bird.gravity;
+            if (bird.velocity > 8) bird.velocity = 8; // Максимальная скорость падения
+            bird.y += bird.velocity;
+
+            // Рисуем птичку (желтый квадрат)
+            ctx.fillStyle = "yellow";
+            ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
+
+            // Создание труб каждые 100 кадров
+            if (frame % 100 == 0) {
+                var pipeY = Math.floor(Math.random() * (canvas.height - gap - 100)) + 50;
+                pipes.push({ x: canvas.width, y: pipeY });
+            }
+
+            // Отрисовка труб и проверка столкновений
+            ctx.fillStyle = "green";
+            for (var i = pipes.length - 1; i >= 0; i--) {
+                pipes[i].x -= 2; // Скорость движения труб
+
+                // Верхняя труба
+                ctx.fillRect(pipes[i].x, 0, pipeWidth, pipes[i].y);
+                // Нижняя труба
+                ctx.fillRect(pipes[i].x, pipes[i].y + gap, pipeWidth, canvas.height);
+
+                // Логика столкновения с трубами
+                if (bird.x + bird.w > pipes[i].x && bird.x < pipes[i].x + pipeWidth) {
+                    if (bird.y < pipes[i].y || bird.y + bird.h > pipes[i].y + gap) {
+                        resetGame();
+                    }
+                }
+
+                // Начисление очков
+                if (pipes[i].x + pipeWidth < 0) {
+                    pipes.splice(i, 1);
+                    score++;
+                }
+            }
+
+            // Столкновение с землей или потолком
+            if (bird.y + bird.h > canvas.height || bird.y < 0) {
+                resetGame();
+            }
+
+            // Вывод счета
+            ctx.fillStyle = "white";
+            ctx.font = "bold 20px Arial";
+            ctx.fillText("Счет: " + score, 15, 30);
+
+            frame++;
+            requestAnimationFrame(draw);
+        }
+
+        // Перезапуск игры при проигрыше
+        function resetGame() {
+            bird.y = 150;
+            bird.velocity = 0;
+            pipes = [];
+            score = 0;
+            frame = 0;
+        }
+
+        // Старт игры
+        draw();
+    </script>
+</body>
+</html>

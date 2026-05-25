@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Мир Игр</title>
+    <style>
+<link rel="stylesheet" href="menudiz.css">
+        button { border-radius: 20px; 
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;}
+.game-btn:hover {
+            background-color: #f5cac3; /* Новый нежный цвет при наведении */
+            color: #ffffff;            /* Цвет текста становится белым */
+            transform: translateY(-3px); /* Кнопка красиво приподнимается */
+            box-shadow: 0 5px 15px rgba(245, 202, 195, 0.5); /* Мягкое свечение */
+        }
+    </style>
+</head>
+<body>
+
+<center>
+    <h1>Мир игр</h1>
+    <p>Добро пожаловать! Здесь вы можете найти интересные игры или просто провести время.</p>
+
+    <br>
+
+    <a href="snake.html"><button>Змейка</button></a>
+    <a href="bird.html"><button>ФлаппиБердс</button></a>
+    <a href="memori.html"><button>Мемори</button></a>
+    <a href="maze.html"><button>Лабиринт</button></a>
+</center>
+
+</body>
+</html>
